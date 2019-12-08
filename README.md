@@ -1,2 +1,2 @@
 # ivmitter
-Ivmiiter is a graduation project for the institute
+Ivmiiter is a graduation android project for the institute

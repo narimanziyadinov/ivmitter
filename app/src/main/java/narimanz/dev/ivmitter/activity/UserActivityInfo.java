@@ -1,10 +1,14 @@
 package narimanz.dev.ivmitter.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,6 +33,7 @@ public class UserActivityInfo extends AppCompatActivity {
 
     private RecyclerView tweetsRecyclerView;
     private TweetAdapter tweetAdapter;
+    private Toolbar toolbar;
     public static final String USER_ID = "userId";
 
     @Override
@@ -43,6 +48,9 @@ public class UserActivityInfo extends AppCompatActivity {
         locationTextView = findViewById(R.id.user_location_text_view);
         followingCountTextView = findViewById(R.id.following_count_text_view);
         followersCountTextView = findViewById(R.id.followers_count_text_view);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         initRecyclerView();
 
@@ -66,6 +74,21 @@ public class UserActivityInfo extends AppCompatActivity {
                 new Tweet(getUser(), 3L, "Thu Dec 11 07:31:08 +0000 2017", "Очень длинное описание твита 3",
                         6L, 6L, "https://www.w3schools.com/css/img_mountains.jpg")
         );
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.user_info_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_search) {
+            Intent intent = new Intent(this, SearchUsersActivity.class);
+            startActivity(intent);
+        }
+        return true;
     }
 
     private void initRecyclerView() {
@@ -92,6 +115,7 @@ public class UserActivityInfo extends AppCompatActivity {
 
         String followersCount = String.valueOf(user.getFollowersCount());
         followersCountTextView.setText(followersCount);
+        getSupportActionBar().setTitle(user.getName());
     }
 
     private User getUser() {

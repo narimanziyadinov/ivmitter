@@ -2,8 +2,16 @@ package narimanz.dev.ivmitter.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +25,9 @@ import narimanz.dev.ivmitter.pojo.User;
 public class SearchUsersActivity extends AppCompatActivity {
     private RecyclerView usersRecyclerView;
     private UsersAdapter usersAdapter;
+    private Toolbar toolbar;
+    private EditText queryEditText;
+    private Button searchButton;
 
 
     @Override
@@ -25,7 +36,43 @@ public class SearchUsersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_users);
         initRecyclerView();
 
+        toolbar = findViewById(R.id.toolbar);
+        queryEditText = toolbar.findViewById(R.id.query_edit_text);
+        searchButton = toolbar.findViewById(R.id.search_button);
+
         searchUsers();
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchUsers();
+            }
+        });
+
+        queryEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    searchUsers();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void initRecyclerView() {
@@ -46,6 +93,7 @@ public class SearchUsersActivity extends AppCompatActivity {
 
     private void searchUsers() {
         Collection<User> users = getUsers();
+        usersAdapter.clearItems();
         usersAdapter.setItems(users);
     }
 
@@ -74,4 +122,6 @@ public class SearchUsersActivity extends AppCompatActivity {
                 )
         );
     }
+
+
 }

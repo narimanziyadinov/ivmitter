@@ -1,4 +1,4 @@
-package narimanz.dev.ivmitter;
+package narimanz.dev.ivmitter.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Arrays;
 import java.util.Collection;
 
+import narimanz.dev.ivmitter.R;
 import narimanz.dev.ivmitter.adapter.TweetAdapter;
 import narimanz.dev.ivmitter.pojo.Tweet;
 import narimanz.dev.ivmitter.pojo.User;
@@ -28,6 +29,7 @@ public class UserActivityInfo extends AppCompatActivity {
 
     private RecyclerView tweetsRecyclerView;
     private TweetAdapter tweetAdapter;
+    public static final String USER_ID = "userId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

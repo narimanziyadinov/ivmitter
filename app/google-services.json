@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "574145683702",
+    "firebase_url": "https://ivmitter.firebaseio.com",
+    "project_id": "ivmitter",
+    "storage_bucket": "ivmitter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574145683702:android:35a3e3ce4ca4f5da888cd7",
+        "android_client_info": {
+          "package_name": "narimanz.dev.ivmitter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "574145683702-smp98j6vhb897j03qtv1tqutoouo5mqk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "narimanz.dev.ivmitter",
+            "certificate_hash": "9fea14aa256b558514b49e84ab64c11080cd3899"
+          }
+        },
+        {
+          "client_id": "574145683702-i774khpcdt0bdh2vfbttdfmdua3kbkar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgrNaMDeoEftUodFRZsZ3VTF4t9pvuVy4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574145683702-i774khpcdt0bdh2vfbttdfmdua3kbkar.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

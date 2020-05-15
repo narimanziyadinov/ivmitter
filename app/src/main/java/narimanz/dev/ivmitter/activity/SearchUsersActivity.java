@@ -1,6 +1,8 @@
 package narimanz.dev.ivmitter.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -9,17 +11,24 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
 import narimanz.dev.ivmitter.R;
 import narimanz.dev.ivmitter.adapter.UsersAdapter;
+import narimanz.dev.ivmitter.network.HttpClient;
 import narimanz.dev.ivmitter.pojo.User;
 
 public class SearchUsersActivity extends AppCompatActivity {
@@ -28,6 +37,9 @@ public class SearchUsersActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private EditText queryEditText;
     private Button searchButton;
+    private HttpClient httpClient;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Override
@@ -39,8 +51,14 @@ public class SearchUsersActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         queryEditText = toolbar.findViewById(R.id.query_edit_text);
         searchButton = toolbar.findViewById(R.id.search_button);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
 
-        searchUsers();
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                searchUsers();
+            }
+        });
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +80,7 @@ public class SearchUsersActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        httpClient = new HttpClient();
     }
 
     @Override
@@ -78,6 +97,7 @@ public class SearchUsersActivity extends AppCompatActivity {
     private void initRecyclerView() {
         usersRecyclerView = findViewById(R.id.users_recycler_view);
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        usersRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
         UsersAdapter.OnUserClickListener onUserClickListener = new UsersAdapter.OnUserClickListener() {
             @Override
@@ -92,35 +112,44 @@ public class SearchUsersActivity extends AppCompatActivity {
     }
 
     private void searchUsers() {
-        Collection<User> users = getUsers();
-        usersAdapter.clearItems();
-        usersAdapter.setItems(users);
+        final String query = queryEditText.getText().toString();
+        if(query.length() == 0) {
+            Toast.makeText(SearchUsersActivity.this, R.string.not_enough_symbols_msg, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        new UsersAsyncTask().execute(query);
     }
 
-    private Collection<User> getUsers() {
-        return Arrays.asList(
-                new User(
-                        929257819349700608L,
-                        "http://i.imgur.com/DvpvklR.png",
-                        "Nariman Ziyadinov",
-                        "@narimanz",
-                        "Developer",
-                        "Kazan",
-                        42,
-                        42
-                ),
+    @SuppressLint("StaticFieldLeak")
+    private class UsersAsyncTask extends AsyncTask<String, Integer, Collection<User>> {
 
-                new User(
-                        44196397L,
-                        "https://sun9-10.userapi.com/c855332/v855332245/14bd0f/G1N_bIeun4c.jpg",
-                        "Aliya Safina",
-                        "@aliya.s",
-                        "Жена Наримана",
-                        "Kazan",
-                        14,
-                        13
-                )
-        );
+
+        @Override
+        protected void onPreExecute() {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected Collection<User> doInBackground(String... params) {
+            String query = params[0];
+            try {
+                return httpClient.readUsers(query);
+            } catch (IOException | JSONException e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Collection<User> users) {
+            swipeRefreshLayout.setRefreshing(false);
+            if (users!=null){
+                usersAdapter.clearItems();
+                usersAdapter.setItems(users);
+            }
+            else {
+                Toast.makeText(SearchUsersActivity.this,R.string.loading_error_msg,Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 
